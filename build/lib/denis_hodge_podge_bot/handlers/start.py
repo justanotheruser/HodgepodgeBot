@@ -5,8 +5,8 @@ from aiogram.types import Message, ReplyKeyboardRemove
 router = Router()
 
 
-@router.message(Command(commands=['start']))
+@router.message(Command('start'))
 async def start(message: Message):
-    text = "Привет! Я бот, умеющий делать разные штуки. Например:\n" \
-           "/weather - Получить текущую погоду в городе"
+    text = "Hello! I can help with some stuff. This is what I can do:\n" \
+           "/weather - Get current weather in a city"
     await message.answer(text=text, reply_markup=ReplyKeyboardRemove())

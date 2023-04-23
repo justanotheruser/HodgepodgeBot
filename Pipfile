@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 aiogram = "*"
 pydantic = {extras = ["dotenv"], version = "*"}
+aiohttp = {version = "==3.8.2", extras = ["speedups"]}
 
 [dev-packages]
 pytest = "*"
