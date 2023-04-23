@@ -1,0 +1,11 @@
+[project]
+name = "denis_hodge_podge_bot"
+version = "0.0.1"
+authors = [
+  { name="Denis Sleptsov", email="hurrdurrrderp@gmail.com" },
+]
+description = "Telegram bot that does stuff"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
