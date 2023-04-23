@@ -15,7 +15,8 @@ async def weather(message: Message, command: CommandObject, aiohttp_session: aio
         return
 
     weather_data = await get_weather(aiohttp_session, message.text)
-    text = f'*{weather_data.location}*\n' \
+    text = f'__{weather_data.location}__\n' \
+           f'_{weather_data.description}_\n' \
            f'*Температура*: {weather_data.temperature}\n' \
            f'*Влажность*: {weather_data.humidity}%\n' \
            f'*Скорость ветра*: {weather_data.wind_speed} км/ч\n'

@@ -1,6 +1,7 @@
 __pycache__/
 .idea
 .eggs/
+build/
 denis_hodge_podge_bot.egg-info/
 .env
 *.log

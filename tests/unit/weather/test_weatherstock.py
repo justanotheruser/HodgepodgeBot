@@ -14,3 +14,4 @@ def test_weather_data_from_json():
     assert data.temperature == 18
     assert data.humidity == 28
     assert data.wind_speed == 19
+    assert data.description == 'Солнечно'

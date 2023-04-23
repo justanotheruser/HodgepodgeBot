@@ -4,6 +4,7 @@ import logging
 from aiohttp import ClientSession
 
 from denis_hodge_podge_bot.config import config
+from denis_hodge_podge_bot.weather import weather_code_ru_converter
 from denis_hodge_podge_bot.weather.types import WeatherData
 
 WEATHERSTACK_URL = 'http://api.weatherstack.com/current'
@@ -13,11 +14,11 @@ logger = logging.getLogger('HodgepodgeBot')
 
 def weather_data_from_response(response: str) -> WeatherData:
     json_data = json.loads(response)
-    return WeatherData(location=json_data['location']['name'],
-                       temperature=json_data['current']['temperature'],
-                       humidity=json_data['current']['humidity'],
-                       wind_speed=json_data['current']['wind_speed'],
-                       description='placeholder')
+    description = weather_code_ru_converter.get_description(
+        code=json_data['current']['weather_code'], is_day=json_data['current']['is_day'])
+    return WeatherData(location=json_data['location']['name'], temperature=json_data['current']['temperature'],
+                       humidity=json_data['current']['humidity'], wind_speed=json_data['current']['wind_speed'],
+                       description=description)
 
 
 async def get_weather(session: ClientSession, city: str):
