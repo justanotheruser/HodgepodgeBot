@@ -19,4 +19,5 @@ async def test_start():
     assert '/weather' in kwargs['text']
     assert '/exchange' in kwargs['text']
     assert '/poll' in kwargs['text']
+    assert '/cute_animal' in kwargs['text']
     assert kwargs['reply_markup'] == ReplyKeyboardRemove()
