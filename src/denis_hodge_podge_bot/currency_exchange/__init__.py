@@ -4,6 +4,8 @@ from typing import Optional
 
 import pandas as pd
 
+from denis_hodge_podge_bot.currency_exchange.errors import UnknownCurrencyError, ExchangeFormatError
+
 
 class CurrencyCodeConverter:
     def __init__(self, currencies_csv: str):
@@ -20,6 +22,7 @@ class CurrencyCodeConverter:
             if currency in self.currencies_df['genitive_case'][code]:
                 return code
         # TODO: check Levenshtein distance of 1 for russian words
+        raise UnknownCurrencyError(f'Неизвестная валюта: "{currency}"')
 
     def identify_target_currency(self, currency: str) -> Optional[str]:
         currency = currency.upper()
@@ -30,16 +33,13 @@ class CurrencyCodeConverter:
             if currency in self.currencies_df['prepositional_case'][code]:
                 return code
         # TODO: check Levenshtein distance of 1 for russian words
+        raise UnknownCurrencyError(f'Неизвестная валюта: "{currency}"')
 
 
 currency_code_converter = CurrencyCodeConverter('currencies.csv')
 
 # TODO: allow three-letter codes
 exchange_pattern = re.compile(r'(\d[\d\s]+([.,]\d+)?)\s?(₽|€|\$|[а-я\s]+(?=во?\s))(\s?во?\s(₽|€|\$|[а-я\s]+))')
-
-
-class ExchangeFormatError(Exception):
-    """Exception request has invalid format"""
 
 
 def split_value_source_target(exchange_request: str) -> tuple[float, str, str]:
