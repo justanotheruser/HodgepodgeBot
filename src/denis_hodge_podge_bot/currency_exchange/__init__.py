@@ -1,56 +1,40 @@
+import os
 import re
 from typing import Optional
 
-# TODO: separate code and data
-currencies_in_genitive_case = {'EUR': ['€', 'евро'], 'USD': ['$', 'дол', 'долларов', 'долларов сша'],
-                               'RUB': ['₽', 'руб', 'рублей', 'российских рублей'], 'JPY': ['японских йен'], 'CNY': ['китайских юаней'],
-                               'GBP': ['фунтов стерлингов'], 'CHF': ['швейцарских франков'],
-                               'AUD': ['австралийских долларов'], 'CAD': ['канадских долларов'],
-                               'NZD': ['новозеландских долларов'], 'HKD': ['гонконгских долларов'],
-                               'SGD': ['сингапурских долларов'], 'KRW': ['вон республики корея'],
-                               'INR': ['индийских рупий'], 'TRY': ['турецких лир'], 'ZAR': ['южноафриканских рэндов'],
-                               'BRL': ['бразильских реалов'], 'MXN': ['мексиканских песо'], 'THB': ['тайских батов'],
-                               'SEK': ['шведских крон'], 'NOK': ['норвежских крон'], 'DKK': ['датских крон'],
-                               'CZK': ['чешских крон'], 'HUF': ['венгерских форинтов'], 'PLN': ['польских злотых'],
-                               'ILS': ['новых израильских шекелей'], 'AED': ['дирхамов оаэ'],
-                               'BHD': ['бахрейнских динаров'], 'OMR': ['оманских риалов'],
-                               'KWD': ['кувейтских динаров'], 'QAR': ['катарских риалов'], 'SAR': ['саудовских риялов'],
-                               'UAH': ['украинских гривен']}
-currencies_in_prepositional_case = {'EUR': ['€', 'евро'], 'USD': ['$', 'дол', 'долларах', 'долларах сша'],
-                                    'RUB': ['₽', 'руб', 'рублях'], 'JPY': ['иенах'], 'CNY': ['юанях'],
-                                    'GBP': ['фунтах стерлингов'], 'CHF': ['франках'], 'AUD': ['австралийских долларах'],
-                                    'CAD': ['канадских долларах'], 'NZD': ['новозеландских долларах'],
-                                    'HKD': ['гонконгских долларах'], 'SGD': ['долларах cингапура'], 'KRW': ['вонах'],
-                                    'INR': ['рупиях'], 'TRY': ['лирах'], 'ZAR': ['рэндах'], 'BRL': ['реалах'],
-                                    'MXN': ['песо'], 'THB': ['батах'], 'SEK': ['шведских кронах'],
-                                    'NOK': ['норвежских кронах'], 'DKK': ['датских кронах'], 'CZK': ['чешских кронах'],
-                                    'HUF': ['форинтах'], 'PLN': ['злотых'], 'ILS': ['шекелях'], 'AED': ['дирхамах'],
-                                    'BHD': ['бахрейнских динарах'], 'OMR': ['риалах'], 'KWD': ['кувейтских динарах'],
-                                    'QAR': ['риалах'], 'SAR': ['риялах'], 'UAH': ['гривнах']}
-currency_codes = list(currencies_in_prepositional_case.keys())
+import pandas as pd
 
 
-def identify_source_currency(currency: str):
-    currency = currency.upper()
-    if currency in currency_codes:
-        return currency
-    currency = currency.lower()
-    for code, genitive_case_names in currencies_in_genitive_case.items():
-        if currency in genitive_case_names:
-            return code
+class CurrencyCodeConverter:
+    def __init__(self, currencies_csv: str):
+        currencies_csv = os.path.join(os.path.dirname(__file__), currencies_csv)
+        self.currencies_df = pd.read_csv(currencies_csv, index_col=0)
+        self.currency_codes = list(self.currencies_df.index)
+
+    def identify_source_currency(self, currency: str):
+        currency = currency.upper()
+        if currency in self.currency_codes:
+            return currency
+        currency = currency.lower()
+        for code in self.currency_codes:
+            if currency in self.currencies_df['genitive_case'][code]:
+                return code
+        # TODO: check Levenshtein distance of 1 for russian words
+
+    def identify_target_currency(self, currency: str) -> Optional[str]:
+        currency = currency.upper()
+        if currency in self.currency_codes:
+            return currency
+        currency = currency.lower()
+        for code in self.currency_codes:
+            if currency in self.currencies_df['prepositional_case'][code]:
+                return code
+        # TODO: check Levenshtein distance of 1 for russian words
 
 
-def identify_target_currency(currency: str) -> Optional[str]:
-    currency = currency.upper()
-    if currency in currency_codes:
-        return currency
-    currency = currency.lower()
-    for code, prepositional_case_names in currencies_in_prepositional_case.items():
-        if currency in prepositional_case_names:
-            return code
-    return None
+currency_code_converter = CurrencyCodeConverter('currencies.csv')
 
-
+# TODO: allow three-letter codes
 exchange_pattern = re.compile(r'(\d[\d\s]+([.,]\d+)?)\s?(₽|€|\$|[а-я\s]+(?=во?\s))(\s?во?\s(₽|€|\$|[а-я\s]+))')
 
 
