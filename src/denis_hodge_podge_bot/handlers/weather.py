@@ -18,14 +18,16 @@ async def weather(message: Message, command: CommandObject, aiohttp_session: aio
         return
 
     try:
-        weather_data = await get_weather(aiohttp_session, message.text)
+        weather_data = await get_weather(aiohttp_session, command.args)
     except Exception as e:
-        logger.error(f"Error during getting weather data: message {message}, exception: {e}")
+        logger.error(f"Error during getting weather data:\n exception: {type(e)}: {str(e)}\nmessage {message}")
         await message.answer(text="Упс! Что-то пошло не так. Попробуйте повторить запрос позже")
         return
-    text = f'__{weather_data.location}__\n' \
-           f'_{weather_data.description}_\n' \
-           f'*Температура*: {weather_data.temperature}\n' \
-           f'*Влажность*: {weather_data.humidity}%\n' \
-           f'*Скорость ветра*: {weather_data.wind_speed} км/ч\n'
+
+    text = f'__{weather_data.location}__\n'
+    if weather_data.description:
+        text += f'_{weather_data.description}_\n'
+    text += f'*Температура*: {weather_data.temperature}\n' \
+            f'*Влажность*: {weather_data.humidity}%\n' \
+            f'*Скорость ветра*: {weather_data.wind_speed} км/ч\n'
     await message.answer(text=text, parse_mode='MarkdownV2')

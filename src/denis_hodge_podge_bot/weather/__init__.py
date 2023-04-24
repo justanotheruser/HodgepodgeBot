@@ -10,7 +10,10 @@ class WeatherCodeConverter:
 
     def get_description(self, code: int, is_day: bool):
         col = 'trans_text_day' if is_day else 'trans_text_night'
-        return self.weather_codes.loc[code][col]
+        try:
+            return self.weather_codes.loc[code][col]
+        except KeyError:
+            return ''
 
 
 weather_code_ru_converter = WeatherCodeConverter('weather_condition_codes_ru.csv')
