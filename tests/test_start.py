@@ -17,4 +17,6 @@ async def test_start():
     await start(command_mock)
     kwargs = get_answer_kwargs(command_mock)
     assert '/weather' in kwargs['text']
+    assert '/exchange' in kwargs['text']
+    assert '/poll' in kwargs['text']
     assert kwargs['reply_markup'] == ReplyKeyboardRemove()

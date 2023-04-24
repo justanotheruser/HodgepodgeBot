@@ -7,6 +7,7 @@ class BotConfig(BaseSettings):
     bot_token: SecretStr
     weatherstack_api_access_key: SecretStr
     exchange_rate_data_api_access_key: SecretStr
+    polls_group_chat_id: int
 
     class Config:
         env_file = os.path.join(os.path.abspath(os.path.dirname(__file__)),

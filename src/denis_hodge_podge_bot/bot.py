@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from config import config
-from handlers import start, weather, currency_exchange
+from handlers import start, weather, currency_exchange, poll
 from middlewares.add_aiohttp_session import AddAiohttpSessionMiddleware
 
 logger = logging.getLogger('HodgepodgeBot')
@@ -22,6 +22,7 @@ async def main():
     dp.include_router(start.router)
     dp.include_router(weather.router)
     dp.include_router(currency_exchange.router)
+    dp.include_router(poll.router)
     async with aiohttp.ClientSession() as session:
         dp.update.middleware(AddAiohttpSessionMiddleware(session))
         await dp.start_polling(bot)
